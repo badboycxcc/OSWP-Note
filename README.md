@@ -36,7 +36,7 @@ lsusb
 sudo airmon-ng
 ```
 
-恢复正常网络连接
+恢复正常网络连接（重启网络）
 ```
 sudo service networking restart
 sudo service NetworkManager restart
