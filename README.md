@@ -7,6 +7,11 @@ sudo apt update
 sudo apt full-upgrade -y
 ```
 
+安装对应框架程序
+```
+sudo apt install airmon-ng reaver hashcat hostapd dnsmasq nftables apache2 libapache2-mod-php freeradius
+```
+
 更新本地 Git 仓库
 ```
 可以使用：
