@@ -1,6 +1,6 @@
 # OSWP-Note
 
-## 1
+## 准备知识
 更新 Kali
 ```
 sudo apt update
@@ -19,6 +19,7 @@ git pull origin main
 报告生成
 ```
 OSCP考试报告模板
+https://github.com/noraj/OSCP-Exam-Report-Template-Markdown
 
 创建 Markdown 文件：
 ruby osert.rb init
