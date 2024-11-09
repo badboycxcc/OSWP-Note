@@ -378,6 +378,87 @@ mana_wpaout=/home/kali/name.hccapx # 指定保存握手的文件路径，每次�
 
 
 
+## wpa_supplicant 连接指定网络
 
+
+### WEP
+
+连接到 WEP 网络永久链接
+```
+network={
+  ssid="SSID"
+  key_mgmt=NONE
+  wep_key0=""
+  wep_tx_keyidx=0
+}
+```
+注意：WEP 中的密码（wep_key0）如果是十六进制则应为小写，""
+十六进制密码中大写字母也可以使用
+
+设置ssid为您要连接的网络名称。然后，将其保存wep.conf并使用以下命令进行连接：
+```
+sudo wpa_supplicant -i <int> -c <file>
+```
+然后打开另一个终端并向ip服务器发出请求DHCP：
+```
+sudo dhclient wlan0 -v
+```
+
+### WPA
+
+配置文件
+
+```
+network={
+    ssid="SSID"
+    psk="password"
+    scan_ssid=1
+    key_mgmt=WPA-PSK
+    proto=WPA2
+}
+```
+
+将proto其设置为WPA(version)：
+
+WPA
+WPA2
+WPA3
+
+设置ssid为您要连接的网络名称。然后，将其保存wpa.conf并使用以下命令进行连接：
+```
+sudo wpa_supplicant -i <int> -c <file>
+```
+
+然后打开另一个终端并向ip服务器发出请求DHCP：
+```
+sudo dhclient wlan0 -v
+```
+
+
+
+### WPA 企业
+
+连接到 WPA Enterprise
+```
+network={
+  ssid="SSID"
+  scan_ssid=1
+  key_mgmt=WPA-EAP
+  eap=PEAP
+  identity="identity\user"
+  password="password"
+  phase1="peaplabel=0"
+  phase2="auth=MSCHAPV2"
+}
+```
+设置identity为用户名和password密码。
+设置ssid为您要连接的网络名称。然后，将其保存wpa_entp.conf并使用以下命令进行连接：
+```
+sudo wpa_supplicant -i <int> -c <file>
+```
+然后打开另一个终端并向ip服务器发出请求DHCP：
+```
+sudo dhclient wlan0 -v
+```
 
 
