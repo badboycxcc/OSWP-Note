@@ -280,6 +280,23 @@ john --wordlist=<wordlist> captured_hashes.txt
 
 
 
+### hostapd-mana.conf 模板
+```
+# hostapd-mana 命令的模板配置文件：
+interface=wlan0
+ssid=apname
+channel=1
+ieee80211n=1
+hw_mode=g # 如果是 5GHz，设置为 a
+wpa=3 # 1 只启用 WPA，2 启用 WPA2
+wpa_key_mgmt=WPA-PSK
+wpa_passphrase=ANYPASSWORD # 实际值不重要，因为我们是为了捕获握手，必须在 8 到 63 个字符之间
+wpa_pairwise=TKIP CCMP # 仅适用于 WPA
+rsn_pairwise =TKIP CCMP # 仅适用于 WPA2，选项 3 启用两者
+mana_wpaout=/home/kali/name.hccapx # 指定保存握手的文件路径，每次握手都会追加到文件中，可以用 hashcat -m 2500 或 aircrack-ng 解密
+# 如果 mana_wpaout 报错：未知配置项 'mana_wpaout'，请确保使用的是 hostapd-mana 命令，而不是 hostapd 命令
+
+```
 
 
 
