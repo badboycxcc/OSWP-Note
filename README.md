@@ -238,6 +238,28 @@ aircrack-ng -w <wordlist> <output file>.cap
 
 
 
+### WPA2/WPA3 企业攻击（手册）
+```
+使用 (WPA2 Enterprise) 的恶意 AP 攻击hostapd-mana：
+
+安装hostapd-mana：
+apt-get install hostapd-mana
+
+配置hostapd-mana： 编辑配置文件 ( hostapd-mana.conf) 以模仿目标网络的 SSID 并设置恶意 AP 来捕获企业凭证。
+跑步hostapd-mana：
+hostapd-mana /path/to/hostapd-mana.conf
+通过记录客户端进行身份验证的尝试来监控捕获的凭据。
+手动 EAP 网络钓鱼攻击使用hostapd-mana：
+
+修改hostapd-mana.conf以启用凭证网络钓鱼。
+设置eap_user_file并eap_server_cert拦截和捕获 PEAP/MSCHAPv2 凭证。
+启动恶意 AP 并捕获凭证：
+hostapd-mana /path/to/hostapd-mana.conf
+捕获的 PEAP/MSCHAPv2 凭证可以通过以下工具进行暴力破解john：
+john --wordlist=<wordlist> captured_hashes.txt
+```
+
+
 
 
 
