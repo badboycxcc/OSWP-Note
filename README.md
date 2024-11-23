@@ -504,3 +504,15 @@ sudo wpa_supplicant -i <int> -c <file>
 ```
 sudo dhclient wlan0 -v
 ```
+
+
+
+
+
+
+
+## 参考
+- https://brandonrussell.io/OSWP-Notes/Introduction.html
+- https://zeyadazima.com/notes/oswplaybook/
+- https://wizardforcel.gitbooks.io/kali-linux-wireless-pentest/content/
+- https://github.com/legitaxes/OSWP-Notes
